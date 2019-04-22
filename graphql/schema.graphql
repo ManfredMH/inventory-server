@@ -1,0 +1,153 @@
+  """Types"""
+  #Clients
+  type Client {
+    id: ID
+    name: String
+    lastname: String
+    company: String
+    emails: [Email]
+    age: Int
+    type: typeClient
+  }
+
+  type Email {
+    email: String
+  }
+
+#Clients
+  enum typeClient {
+    BASIC
+    PREMIUM
+  }
+
+#Orders
+enum StatusOrder {
+    PENDING
+    COMPLETED
+    CANCELED
+}
+
+#Products
+  type Product {
+    id: ID
+    name: String!
+    price: Int!
+    stock: Int!
+  }
+
+  #Orders
+  type Order {
+    id: ID
+    order: [OrderProduct]
+    total: Int
+    date: String
+    client: ID
+    status: StatusOrder
+    seller: ID
+  }
+
+  type OrderProduct {
+    id: ID
+    quantity: Int
+  }
+
+  #Graph
+  type TotalClient {
+    total: Float
+    client: [Client]
+  }
+
+  type TotalSeller {
+    total: Float
+    seller: [User]
+  }
+
+  #Users
+  type Token {
+    token: String!
+  }
+
+  type User {
+    id: ID
+    user: String
+    name: String
+    rol: String
+  }
+
+  """Queries"""
+  type Query {
+    #Clients
+    getClients(limit: Int, offset: Int, seller: String): [Client]
+    getClient(id: ID!): Client
+    totalClients(seller: String): String
+    #Products
+    getProducts(limit: Int, offset: Int, stock: Boolean): [Product]
+    getProduct(id: ID!): Product
+    totalProducts: String
+    #Orders
+    getOrders(client: ID): [Order]
+    #Graph
+    topClients: [TotalClient]
+    topSellers: [TotalSeller]
+    #Users
+    getUser: User
+  }
+
+"""Inputs"""
+#Clients
+  input EmailInput {
+    email: String
+  }
+
+  input ClientInput {
+    id: ID
+    name: String!
+    lastname: String!
+    company: String!
+    emails: [EmailInput]!
+    age: Int!
+    type: typeClient!
+    seller: ID
+  }
+
+#Products
+  input ProductInput {
+    id: ID
+    name: String!
+    price: Int!
+    stock: Int!
+  }
+
+  #Orders
+  input OrderInput {
+    id: ID
+    order: [OrderProductInput]
+    total: Int
+    date: String
+    client: ID
+    status: StatusOrder
+    seller: ID
+  }
+
+  input OrderProductInput {
+    id: ID
+    quantity: Int
+  }
+
+  """Mutations"""
+  type Mutation {
+    #Clients
+    createClient(input: ClientInput) : Client
+    updateClient(input: ClientInput) : Client
+    deleteClient(id: ID!) : String
+    #Products
+    createProduct(input: ProductInput) : Product
+    updateProduct(input: ProductInput) : Product
+    deleteProduct(id: ID!): String
+    #Orders
+    addOrder(input: OrderInput) : Order
+    updateStatus(input: OrderInput) : String
+    #Users
+    createUser(user: String!, name: String! password: String!, rol: String!): String
+    authenticatedUser(user: String!, password: String!): Token
+  }
